@@ -5,7 +5,7 @@ This repository provides a reliable, CPU-based SQM setup for LTE connections on 
 The goal is simple:
 👉 Fix bufferbloat on LTE connections so latency stays low under load.
 
-===================================
+#####
 
 ❓ The Problem (Why This Exists)
 
@@ -23,7 +23,7 @@ High latency under load
 
 Speed tests that look fine but real-world performance that feels terrible
 
-==================================
+#####
 
 ✅ What This Fix Does
 
@@ -40,7 +40,7 @@ Disabling hardware acceleration that bypasses SQM
 Result:
 Stable latency, working CAKE shaping, and predictable LTE performance.
 
-=================================
+#####
 
 🧠 Who This Is For
 
@@ -56,7 +56,7 @@ You’re comfortable running a few shell commands
 
 This is not a beginner networking tutorial — but everything is documented step-by-step.
 
-==================================
+#####
 
 🧩 What’s in This Repository
 
@@ -66,7 +66,7 @@ SCRIPTS.md 👉 Copy-ready scripts with full explanations
 
 example.png 👉 Reference / visual context
 
-==================================
+#####
 
 🚀 High-Level Setup Overview
 
@@ -80,7 +80,7 @@ Add a hotplug script so SQM survives LTE reconnects
 
 Enable the service so it runs on boot
 
-======================================
+#####
 
 First create the SQM Init Script File
 
@@ -122,7 +122,7 @@ chmod +x /etc/init.d/sqm-fix
 At this point, the init script is installed and ready to run.
 
 
-================================
+#####
 
 ⚠️ Important Notes
 
@@ -134,7 +134,7 @@ If you re-enable hardware offloading, SQM will stop working
 
 If something breaks, a reboot + removing the scripts restores default behavior.
 
-===============================
+#####
 
 ✅ Tested Environment
 
@@ -148,7 +148,7 @@ SQM: CAKE (ingress + egress)
 
 Other Qualcomm-based OpenWrt routers may work with minimal or no changes.
 
-================================
+#####
 
 📌 Final Thoughts
 
