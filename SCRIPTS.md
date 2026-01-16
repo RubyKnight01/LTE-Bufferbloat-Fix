@@ -16,32 +16,40 @@ Bash
 # This script creates a virtual IFB device for Ingress (Download) shaping
 # and redirects eth0 traffic to it so SQM/CAKE can process it.
 
-    START=99
+### 1. SQM Initialization Script
+**File Path:** `/etc/init.d/sqm-fix`
 
-    start() {
-        echo "Initializing SQM Bridge for Qualcomm NSS bypass..."
+```bash
+#!/bin/sh /etc/rc.common
 
-        # 1. Create the virtual device using the SQM naming convention
-        ip link add name ifb4eth0 type ifb 2>/dev/null
-        ip link set dev ifb4eth0 up
+START=99
 
-        # 2. Attach the Ingress Qdisc hook to the physical WAN port (eth0)
-        tc qdisc add dev eth0 handle ffff: ingress 2>/dev/null
+start() {
+    echo "Initializing SQM Bridge for Qualcomm NSS bypass..."
 
-        # 3. Redirect all traffic from eth0 to the virtual device ifb4eth0
-        tc filter add dev eth0 parent ffff: protocol all u32 match u32 0 0 \
-        action mirred egress redirect dev ifb4eth0 2>/dev/null
+    # 1. Create the virtual device using the SQM naming convention
+    ip link add name ifb4eth0 type ifb 2>/dev/null
+    ip link set dev ifb4eth0 up
 
-        # 4. Restart the SQM service to pick up the new interface
-        /etc/init.d/sqm restart
+    # 2. Attach the Ingress Qdisc hook to the physical WAN port (eth0)
+    tc qdisc add dev eth0 handle ffff: ingress 2>/dev/null
 
-        echo "SQM Bridge successfully linked to ifb4eth0."
-    }
+    # 3. Redirect all traffic from eth0 to the virtual device ifb4eth0
+    tc filter add dev eth0 parent ffff: protocol all u32 match u32 0 0 \
+    action mirred egress redirect dev ifb4eth0 2>/dev/null
 
-    stop() {
-        echo "Tearing down SQM Bridge..."
-        ip link delete ifb4eth0 2>/dev/null
-    }
+    # 4. Restart the SQM service to pick up the new interface
+    /etc/init.d/sqm restart
+
+    echo "SQM Bridge successfully linked to ifb4eth0."
+}
+
+stop() {
+    echo "Tearing down SQM Bridge..."
+    ip link delete ifb4eth0 2>/dev/null
+}
+
+---
 
 2. Hotplug Persistence Script
 
