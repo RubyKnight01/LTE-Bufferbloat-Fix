@@ -5,7 +5,7 @@ This repository provides a reliable, CPU-based SQM setup for LTE connections on 
 The goal is simple:
 👉 Fix bufferbloat on LTE connections so latency stays low under load.
 
-
+===================================
 
 ❓ The Problem (Why This Exists)
 
@@ -25,7 +25,7 @@ SQM appearing “enabled” but doing nothing
 
 Speed tests that look fine but real-world performance that feels terrible
 
-
+==================================
 
 ✅ What This Fix Does
 
@@ -42,7 +42,7 @@ Disabling hardware acceleration that bypasses SQM
 Result:
 Stable latency, working CAKE shaping, and predictable LTE performance.
 
-
+=================================
 
 🧠 Who This Is For
 
@@ -58,13 +58,16 @@ You’re comfortable running a few shell commands
 
 This is not a beginner networking tutorial — but everything is documented step-by-step.
 
-
+==================================
 
 🧩 What’s in This Repository
 File	Description
 README.md	High-level explanation and usage
 SCRIPTS.md	Copy-ready scripts with full explanations
 example.png	Reference / visual context
+
+==================================
+
 🚀 High-Level Setup Overview
 
 You will:
@@ -77,12 +80,49 @@ Add a hotplug script so SQM survives LTE reconnects
 
 Enable the service so it runs on boot
 
+======================================
 
+First create the SQM Init Script File
+
+Before applying any fixes, you need to create the init script file that OpenWrt will execute.
+
+START HERE 👉👉👉👉👉 1️⃣ SSH into your router
+
+```
+ssh root@yourrouterip
+```
+
+2️⃣ Create the init script file
+
+Use a text editor such as vi or nano:
+
+```
+vi /etc/init.d/sqm-fix
+```
+
+3️⃣ Paste the script contents
+
+Copy the entire SQM Initialization Script from SCRIPTS.md📄
+
+, then save and exit.
 
 👉 All commands and scripts are documented in detail here:
 📄 SCRIPTS.md
 
+4️⃣ Make the script executable
+```
+chmod +x /etc/init.d/sqm-fix
+```
 
+5️⃣ Enable the script to run on boot
+```
+/etc/init.d/sqm-fix enable
+```
+
+At this point, the init script is installed and ready to run.
+
+
+================================
 
 ⚠️ Important Notes
 
@@ -94,7 +134,7 @@ If you re-enable hardware offloading, SQM will stop working
 
 If something breaks, a reboot + removing the scripts restores default behavior.
 
-
+===============================
 
 ✅ Tested Environment
 
@@ -108,7 +148,7 @@ SQM: CAKE (ingress + egress)
 
 Other Qualcomm-based OpenWrt routers may work with minimal or no changes.
 
-
+================================
 
 📌 Final Thoughts
 
