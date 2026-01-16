@@ -6,6 +6,45 @@ Adaptive Persistence: Custom scripts in init.d and hotplug.d ensure the virtual 
 
 Overhead Compensation: Configured to handle the variable nature of LTE packet encapsulation.
 
+================================================================
+
+🛠️ Prerequisites & Environment
+
+This guide is designed for OpenWrt users who are comfortable using the Command Line Interface (CLI) via SSH.
+
+1. Hardware & OS
+
+Device: GL.iNet GL-AX1800 (Flint) or similar Qualcomm-based routers.
+
+Firmware: OpenWrt 21.02 or newer (Snapshot builds confirmed working).
+
+Access: SSH access (using Terminal, PuTTY, or PowerShell).
+
+
+2. Required Packages
+
+The SQM scripts will not function unless the base SQM and CAKE packages are installed. If they are missing from your build, run the following commands while your router has internet access:
+Bash
+
+opkg update
+opkg install lucid-app-sqm sqm-scripts sqm-scripts-extra tc-full kmod-sched-cake kmod-ifb
+
+
+3. Command Line First
+
+While some of these settings can be seen in the LuCI web interface, this specific fix requires the CLI. The proprietary hardware acceleration on many GL.iNet/Qualcomm devices often hides the "Disable" toggle in the GUI, making the manual UCI commands provided in this repo mandatory.
+🚀 Quick Start (CLI Only)
+
+Install the packages listed above.
+
+Disable Acceleration using the disable-nss-acceleration.sh script.
+
+Configure your speeds (based on 90% of your LTE baseline).
+
+Deploy the persistence scripts to ensure your shaper survives a reboot.
+
+=======================================================================================
+
 ⚙️ Configuration & Speed Tuning
 
 Before deploying the scripts, you must define your bandwidth targets. Unlike fixed-line broadband, LTE requires a more strategic approach to speed setting.
@@ -45,7 +84,7 @@ High Jitter/Ping Spikes	Lower the download speed by another 5-10%.
 Bufferbloat "C" or lower	Ensure linklayer is set to none in /etc/config/sqm for LTE.
 Video Buffering	Slightly increase the download limit, but monitor the av_delay in tc -s qdisc.
 
-=============================================================
+===================================================================================
 
 Troubleshooting Log (Homelab Notes)
 
