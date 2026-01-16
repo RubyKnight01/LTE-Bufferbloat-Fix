@@ -61,10 +61,12 @@ This is not a beginner networking tutorial — but everything is documented step
 ==================================
 
 🧩 What’s in This Repository
-File	Description
-README.md	High-level explanation and usage
-SCRIPTS.md	Copy-ready scripts with full explanations
-example.png	Reference / visual context
+
+README.md	👉 High-level explanation and usage
+
+SCRIPTS.md 👉 Copy-ready scripts with full explanations
+
+example.png 👉 Reference / visual context
 
 ==================================
 
