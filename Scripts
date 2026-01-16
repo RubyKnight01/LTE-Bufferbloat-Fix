@@ -1,8 +1,14 @@
-Filename: sqm-fix.sh
+📜 Automation & Configuration Scripts
 
-Location in router: /etc/init.d/sqm-fix
+These scripts handle the initialization of the virtual bridge, persistence across reboots, and the disabling of hardware acceleration.
 
-This script handles the heavy lifting of creating the virtual bridge and linking the WAN traffic to the shaper:
+
+1. SQM Initialization Script
+
+File Path: /etc/init.d/sqm-fix
+
+Purpose: Handles the creation of the virtual bridge and links WAN traffic to the CPU shaper.
+Bash
 
 #!/bin/sh /etc/rc.common
 
@@ -37,14 +43,15 @@ stop() {
 }
 
 
----------------------------------------------------------------------------------------------------
 
 
-Filename: 99-sqm-fix-hotplug
 
-Location in Router: /etc/hotplug.d/iface/99-sqm-fix
+2. Hotplug Persistence Script
 
-This ensures the fix is "event-driven"—it triggers automatically whenever the internet connection cycles or the router finishes booting:
+File Path: /etc/hotplug.d/iface/99-sqm-fix
+
+Purpose: Ensures the fix is "event-driven"—re-applying the bridge whenever the LTE connection cycles or the WAN interface comes online.
+Bash
 
 #!/bin/sh
 
@@ -55,16 +62,15 @@ This ensures the fix is "event-driven"—it triggers automatically whenever the 
 
 
 
---------------------------------------------------------------------------------------------------
 
-Filename: disable-nss-acceleration.sh
+3. Hardware Acceleration Kill-Switch
 
-Context: Documentation of the CLI commands used to disable hardware offloading.
+Execution: Run via CLI
+
+Purpose: Disables the Qualcomm NSS and Shortcut Forwarding Engine (SFE) to prevent packets from bypassing the CPU shaper.
+Bash
 
 #!/bin/sh
-
-# These commands disable the Qualcomm NSS hardware offloading 
-# which normally bypasses the CPU and breaks SQM shaping.
 
 # Disable NSS and Firewall Offloading
 uci set network.globals.nss_offload='0' 2>/dev/null
@@ -75,7 +81,7 @@ uci set firewall.@defaults[0].fullcone_nat='0'
 uci commit network
 uci commit firewall
 
-# Restart services
+# Restart services to apply CPU-path routing
 /etc/init.d/network restart
 /etc/init.d/firewall restart
 
