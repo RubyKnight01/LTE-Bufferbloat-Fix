@@ -21,8 +21,6 @@ This causes:
 
 High latency under load
 
-SQM appearing “enabled” but doing nothing
-
 Speed tests that look fine but real-world performance that feels terrible
 
 ==================================
