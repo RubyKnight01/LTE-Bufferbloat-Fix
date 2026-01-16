@@ -1,14 +1,14 @@
-📜 Automation & Configuration Scripts
+# Automation & Configuration Scripts
+# ===================================
 
-These scripts handle the initialization of the virtual bridge, persistence across reboots, and the disabling of hardware acceleration.
+# These scripts handle the initialization of the virtual bridge, persistence across reboots, and the disabling of hardware acceleration.
 
+# 1. SQM Initialization Script
 
-1. SQM Initialization Script
+# File Path: /etc/init.d/sqm-fix
 
-File Path: /etc/init.d/sqm-fix
+# Purpose: Handles the creation of the virtual bridge and links WAN traffic to the CPU shaper.
 
-Purpose: Handles the creation of the virtual bridge and links WAN traffic to the CPU shaper.
-Bash
 
 #!/bin/sh /etc/rc.common
 
@@ -42,16 +42,14 @@ stop() {
     ip link delete ifb4eth0 2>/dev/null
 }
 
+--------------------------------------------------------------------------------------------------------------------
 
+# 2. Hotplug Persistence Script
+# =============================
 
+# File Path: /etc/hotplug.d/iface/99-sqm-fix
 
-
-2. Hotplug Persistence Script
-
-File Path: /etc/hotplug.d/iface/99-sqm-fix
-
-Purpose: Ensures the fix is "event-driven"—re-applying the bridge whenever the LTE connection cycles or the WAN interface comes online.
-Bash
+# Purpose: Ensures the fix is "event-driven"—re-applying the bridge whenever the LTE connection cycles or the WAN interface comes online.
 
 #!/bin/sh
 
@@ -61,14 +59,14 @@ Bash
 [ "$ACTION" = "ifup" ] && [ "$INTERFACE" = "wan" ] && /etc/init.d/sqm-fix start
 
 
+---------------------------------------------------------------------------------------------------------------------
 
+# 3. Hardware Acceleration Kill-Switch
+# =====================================
 
-3. Hardware Acceleration Kill-Switch
+# Execution: Run via CLI
 
-Execution: Run via CLI
-
-Purpose: Disables the Qualcomm NSS and Shortcut Forwarding Engine (SFE) to prevent packets from bypassing the CPU shaper.
-Bash
+# Purpose: Disables the Qualcomm NSS and Shortcut Forwarding Engine (SFE) to prevent packets from bypassing the CPU shaper.
 
 #!/bin/sh
 
