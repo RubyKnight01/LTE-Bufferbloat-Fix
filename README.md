@@ -1,5 +1,7 @@
 =============================================================
+
 SQM Config key features
+
 =======================
 
 CAKE (Common Applications Kept Enhanced): Used for its superior "triple-isolate" logic, which ensures fair bandwidth distribution even when multiple devices are streaming/gaming.
@@ -9,7 +11,9 @@ Adaptive Persistence: Custom scripts in init.d and hotplug.d ensure the virtual 
 Overhead Compensation: Configured to handle the variable nature of LTE packet encapsulation.
 
 ===============================================================
+
 Prerequisites & Environment
+
 ============================
 
 This guide is designed for OpenWrt users who are comfortable using the Command Line Interface (CLI) via SSH.
@@ -46,7 +50,9 @@ Configure your speeds (based on 90% of your LTE baseline).
 Deploy the persistence scripts to ensure your shaper survives a reboot.
 
 =======================================================================================
+
 Configuration & Speed Tuning
+
 ============================
 
 Before deploying the scripts, you must define your bandwidth targets. Unlike fixed-line broadband, LTE requires a more strategic approach to speed setting.
@@ -89,7 +95,9 @@ Video Buffering	Slightly increase the download limit, but monitor the av_delay i
 
 
 ===================================================================================
+
 Troubleshooting Log (Homelab Notes)
+
 ===================================
 
 During implementation, several hurdles were cleared:
@@ -110,7 +118,9 @@ Fix: Discovered through kernel logs that SQM expected the naming convention ifb4
 
 
 =============================================================
+
 Verification & Metrics
+
 ======================
 
 To verify the shaper is active, run the following command during a speed test:
@@ -131,7 +141,9 @@ Verify NSS Offloading is disabled. If it returns nothing or shows the modules ar
 
 
 ============================================================
+
 How to use:
+
 ===========
 
 Upload scripts to /etc/init.d/ and /etc/hotplug.d/iface/.
