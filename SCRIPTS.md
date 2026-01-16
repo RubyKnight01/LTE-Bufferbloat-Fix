@@ -1,4 +1,4 @@
-📜 Automation & Configuration Scripts
+## 📜 Automation & Configuration Scripts
 
 This document contains the scripts necessary to initialize the virtual bridge, ensure persistence across reboots, and disable hardware acceleration on the GL-AX1800.
 1. SQM Initialization Script
