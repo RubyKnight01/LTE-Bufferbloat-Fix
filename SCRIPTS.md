@@ -45,7 +45,9 @@ Bash
 
 2. Hotplug Persistence Script
 
-File Path: /etc/hotplug.d/iface/99-sqm-fix
+File Path: 
+
+    /etc/hotplug.d/iface/99-sqm-fix
 
 Purpose: Ensures the shaper is "event-driven." It re-applies the bridge automatically if the LTE connection resets or the interface toggles.
 Bash
