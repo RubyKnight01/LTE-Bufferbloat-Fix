@@ -1,4 +1,6 @@
-Key Features
+=============================================================
+SQM Config key features
+=======================
 
 CAKE (Common Applications Kept Enhanced): Used for its superior "triple-isolate" logic, which ensures fair bandwidth distribution even when multiple devices are streaming/gaming.
 
@@ -6,11 +8,9 @@ Adaptive Persistence: Custom scripts in init.d and hotplug.d ensure the virtual 
 
 Overhead Compensation: Configured to handle the variable nature of LTE packet encapsulation.
 
-
-================================================================
-
-
-🛠️ Prerequisites & Environment
+===============================================================
+Prerequisites & Environment
+============================
 
 This guide is designed for OpenWrt users who are comfortable using the Command Line Interface (CLI) via SSH.
 
@@ -31,12 +31,11 @@ Bash
     opkg update
     opkg install lucid-app-sqm sqm-scripts sqm-scripts-extra tc-full kmod-sched-cake kmod-ifb
 
-
 3. Command Line First
 
 While some of these settings can be seen in the LuCI web interface, this specific fix requires the CLI. The proprietary hardware acceleration on many GL.iNet/Qualcomm devices often hides the "Disable" toggle in the GUI, making the manual UCI commands provided in this repo mandatory.
 
-🚀 Quick Start (CLI Only)
+Quick Start (CLI Only)
 
 Install the packages listed above.
 
@@ -46,11 +45,9 @@ Configure your speeds (based on 90% of your LTE baseline).
 
 Deploy the persistence scripts to ensure your shaper survives a reboot.
 
-
 =======================================================================================
-
-
-⚙️ Configuration & Speed Tuning
+Configuration & Speed Tuning
+============================
 
 Before deploying the scripts, you must define your bandwidth targets. Unlike fixed-line broadband, LTE requires a more strategic approach to speed setting.
 
@@ -92,9 +89,8 @@ Video Buffering	Slightly increase the download limit, but monitor the av_delay i
 
 
 ===================================================================================
-
-
 Troubleshooting Log (Homelab Notes)
+===================================
 
 During implementation, several hurdles were cleared:
 
@@ -102,9 +98,11 @@ Issue: tc -s qdisc showed 0 bytes even when downloading.
 
 Fix: Identified that Shortcut Forwarding Engine (SFE) was active; disabled via UCI and firewall settings.
 
+
 Issue: Interface ifb0 disappeared on reboot.
 
 Fix: Switched to a Hotplug script that listens for the wan interface "up" event to trigger the bridge creation.
+
 
 Issue: SQM service naming conflict.
 
@@ -112,9 +110,8 @@ Fix: Discovered through kernel logs that SQM expected the naming convention ifb4
 
 
 =============================================================
-
-
 Verification & Metrics
+======================
 
 To verify the shaper is active, run the following command during a speed test:
 
@@ -134,9 +131,8 @@ Verify NSS Offloading is disabled. If it returns nothing or shows the modules ar
 
 
 ============================================================
-
-
 How to use:
+===========
 
 Upload scripts to /etc/init.d/ and /etc/hotplug.d/iface/.
 
