@@ -6,7 +6,9 @@ Adaptive Persistence: Custom scripts in init.d and hotplug.d ensure the virtual 
 
 Overhead Compensation: Configured to handle the variable nature of LTE packet encapsulation.
 
+
 ================================================================
+
 
 🛠️ Prerequisites & Environment
 
@@ -26,13 +28,14 @@ Access: SSH access (using Terminal, PuTTY, or PowerShell).
 The SQM scripts will not function unless the base SQM and CAKE packages are installed. If they are missing from your build, run the following commands while your router has internet access:
 Bash
 
-opkg update
-opkg install lucid-app-sqm sqm-scripts sqm-scripts-extra tc-full kmod-sched-cake kmod-ifb
+    opkg update
+    opkg install lucid-app-sqm sqm-scripts sqm-scripts-extra tc-full kmod-sched-cake kmod-ifb
 
 
 3. Command Line First
 
 While some of these settings can be seen in the LuCI web interface, this specific fix requires the CLI. The proprietary hardware acceleration on many GL.iNet/Qualcomm devices often hides the "Disable" toggle in the GUI, making the manual UCI commands provided in this repo mandatory.
+
 🚀 Quick Start (CLI Only)
 
 Install the packages listed above.
@@ -43,7 +46,9 @@ Configure your speeds (based on 90% of your LTE baseline).
 
 Deploy the persistence scripts to ensure your shaper survives a reboot.
 
+
 =======================================================================================
+
 
 ⚙️ Configuration & Speed Tuning
 
@@ -73,10 +78,11 @@ To set your specific download and upload speeds (in Kilobits), run the following
 Bash
 
 Example for 22Mbps Down and 8Mbps Up
-uci set sqm.eth0.download='22000'
-uci set sqm.eth0.upload='8000'
-uci commit sqm
-/etc/init.d/sqm restart
+
+    uci set sqm.eth0.download='22000'
+    uci set sqm.eth0.upload='8000'
+    uci commit sqm
+    /etc/init.d/sqm restart
 
 Optimization Tips for LTE
 Scenario	Adjustment
@@ -84,7 +90,9 @@ High Jitter/Ping Spikes	Lower the download speed by another 5-10%.
 Bufferbloat "C" or lower	Ensure linklayer is set to none in /etc/config/sqm for LTE.
 Video Buffering	Slightly increase the download limit, but monitor the av_delay in tc -s qdisc.
 
+
 ===================================================================================
+
 
 Troubleshooting Log (Homelab Notes)
 
@@ -102,7 +110,9 @@ Issue: SQM service naming conflict.
 
 Fix: Discovered through kernel logs that SQM expected the naming convention ifb4eth0, and updated manual scripts to match.
 
+
 =============================================================
+
 
 Verification & Metrics
 
@@ -122,7 +132,9 @@ Verify NSS Offloading is disabled. If it returns nothing or shows the modules ar
 
     lsmod | grep nss
 
+
 ============================================================
+
 
 How to use:
 
