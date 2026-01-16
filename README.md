@@ -37,6 +37,12 @@ Success Criteria:
 
     backlog shows small values, indicating CAKE is actively managing the queue.
 
+# Verify NSS Offloading is disabled:
+
+lsmod | grep nss
+
+# If it returns nothing or shows the modules are not in use, it confirms the "hack" is active
+
 How to use:
 
     Upload scripts to /etc/init.d/ and /etc/hotplug.d/iface/.
