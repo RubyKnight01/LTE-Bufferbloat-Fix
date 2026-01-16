@@ -139,6 +139,7 @@ Verify NSS Offloading is disabled. If it returns nothing or shows the modules ar
 
     lsmod | grep nss
 
+See example.png for results
 
 ============================================================
 
