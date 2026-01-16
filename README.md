@@ -27,7 +27,7 @@ Verification & Metrics
 To verify the shaper is active, run the following command during a speed test:
 Bash
 
-tc -s qdisc show dev ifb4eth0
+    tc -s qdisc show dev ifb4eth0
 
 Success Criteria:
 
@@ -37,11 +37,9 @@ Success Criteria:
 
     backlog shows small values, indicating CAKE is actively managing the queue.
 
-# Verify NSS Offloading is disabled:
+Verify NSS Offloading is disabled. If it returns nothing or shows the modules are not in use, it confirms the "hack" is active:
 
-lsmod | grep nss
-
-# If it returns nothing or shows the modules are not in use, it confirms the "hack" is active
+    lsmod | grep nss
 
 How to use:
 
