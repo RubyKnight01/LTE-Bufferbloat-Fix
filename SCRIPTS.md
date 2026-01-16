@@ -49,7 +49,7 @@ stop() {
     ip link delete ifb4eth0 2>/dev/null
 }
 
----
+echo "Script 1"
 
 2. Hotplug Persistence Script
 
