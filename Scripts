@@ -1,5 +1,5 @@
-# Automation & Configuration Scripts
-# ===================================
+# Script 1 Automation & Configuration Scripts
+# ===========================================
 
 # These scripts handle the initialization of the virtual bridge, persistence across reboots, and the disabling of hardware acceleration.
 
@@ -44,8 +44,9 @@ stop() {
 
 --------------------------------------------------------------------------------------------------------------------
 
-# 2. Hotplug Persistence Script
-# =============================
+# Script 2 Hotplug Persistence Script
+
+# ===================================
 
 # File Path: /etc/hotplug.d/iface/99-sqm-fix
 
@@ -61,8 +62,9 @@ stop() {
 
 ---------------------------------------------------------------------------------------------------------------------
 
-# 3. Hardware Acceleration Kill-Switch
-# =====================================
+# Script 3 Hardware Acceleration Kill-Switch
+
+# ==========================================
 
 # Execution: Run via CLI
 
