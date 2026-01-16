@@ -30,17 +30,16 @@ Recommendation: Monitor your data usage. If you hit an FUP limit, you must manua
 
 
 3. Applying Your Speeds
-
 To set your specific download and upload speeds (in Kilobits), run the following commands on your router:
 Bash
 
-# Example for 22Mbps Down and 8Mbps Up
+Example for 22Mbps Down and 8Mbps Up
 uci set sqm.eth0.download='22000'
 uci set sqm.eth0.upload='8000'
 uci commit sqm
 /etc/init.d/sqm restart
 
-📈 Optimization Tips for LTE
+Optimization Tips for LTE
 Scenario	Adjustment
 High Jitter/Ping Spikes	Lower the download speed by another 5-10%.
 Bufferbloat "C" or lower	Ensure linklayer is set to none in /etc/config/sqm for LTE.
