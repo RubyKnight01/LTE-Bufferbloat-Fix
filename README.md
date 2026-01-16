@@ -1,160 +1,111 @@
-=============================================================
+📡 LTE Bufferbloat Fix for OpenWrt (GL-AX1800)
 
-SQM Config key features
+This repository provides a reliable, CPU-based SQM setup for LTE connections on OpenWrt devices affected by hardware offloading (NSS / SFE), specifically tested on the GL-AX1800.
 
-=======================
+The goal is simple:
+👉 Fix bufferbloat on LTE connections so latency stays low under load.
 
-CAKE (Common Applications Kept Enhanced): Used for its superior "triple-isolate" logic, which ensures fair bandwidth distribution even when multiple devices are streaming/gaming.
+❓ The Problem (Why This Exists)
 
-Adaptive Persistence: Custom scripts in init.d and hotplug.d ensure the virtual bridge (ifb4eth0) survives reboots and LTE connection drops.
+On Qualcomm-based routers, LTE traffic is often:
 
-Overhead Compensation: Configured to handle the variable nature of LTE packet encapsulation.
+Offloaded to hardware (NSS / SFE)
 
-===============================================================
+Routed around the Linux networking stack
 
-Prerequisites & Environment
+Invisible to SQM / CAKE
 
-============================
+This causes:
 
-This guide is designed for OpenWrt users who are comfortable using the Command Line Interface (CLI) via SSH.
+High latency under load
 
-1. Hardware & OS
+SQM appearing “enabled” but doing nothing
 
-Device: GL.iNet GL-AX1800 (Flint) or similar Qualcomm-based routers.
+Speed tests that look fine but real-world performance that feels terrible
 
-Firmware: OpenWrt 21.02 or newer (Snapshot builds confirmed working).
+✅ What This Fix Does
 
-Access: SSH access (using Terminal, PuTTY, or PowerShell).
+This setup forces all WAN traffic through the CPU, allowing SQM to work correctly by:
 
+Creating an IFB (Intermediate Functional Block) interface for ingress shaping
 
-2. Required Packages
+Redirecting WAN traffic to that IFB device
 
-The SQM scripts will not function unless the base SQM and CAKE packages are installed. If they are missing from your build, run the following commands while your router has internet access:
-Bash
+Making the setup persistent across reboots and LTE reconnects
 
-    opkg update
-    opkg install lucid-app-sqm sqm-scripts sqm-scripts-extra tc-full kmod-sched-cake kmod-ifb
+Disabling hardware acceleration that bypasses SQM
 
-3. Command Line First
+Result:
+Stable latency, working CAKE shaping, and predictable LTE performance.
 
-While some of these settings can be seen in the LuCI web interface, this specific fix requires the CLI. The proprietary hardware acceleration on many GL.iNet/Qualcomm devices often hides the "Disable" toggle in the GUI, making the manual UCI commands provided in this repo mandatory.
+🧠 Who This Is For
 
-Quick Start (CLI Only)
+This repo is for you if:
 
-Install the packages listed above.
+You’re using OpenWrt on a Qualcomm-based router
 
-Disable Acceleration using the disable-nss-acceleration.sh script.
+You rely on LTE / cellular WAN
 
-Configure your speeds (based on 90% of your LTE baseline).
+SQM appears enabled but bufferbloat remains
 
-Deploy the persistence scripts to ensure your shaper survives a reboot.
+You’re comfortable running a few shell commands
 
-=======================================================================================
+This is not a beginner networking tutorial — but everything is documented step-by-step.
 
-Configuration & Speed Tuning
+🧩 What’s in This Repository
+File	Description
+README.md	High-level explanation and usage
+SCRIPTS.md	Copy-ready scripts with full explanations
+example.png	Reference / visual context
+🚀 High-Level Setup Overview
 
-============================
+You will:
 
-Before deploying the scripts, you must define your bandwidth targets. Unlike fixed-line broadband, LTE requires a more strategic approach to speed setting.
+Disable hardware acceleration (NSS / SFE)
 
+Install an init script to create the IFB bridge
 
-1. Identify Your "True" Baseline
+Add a hotplug script so SQM survives LTE reconnects
 
-Run several speed tests at different times of the day (morning, afternoon, and peak evening hours).
+Enable the service so it runs on boot
 
-The Golden Rule: Set your SQM speeds to 85-90% of your lowest consistent result.
+👉 All commands and scripts are documented in detail here:
+📄 SCRIPTS.md
 
-If you usually get 30Mbps but it drops to 25Mbps during peak hours, use 22Mbps as your base.
+⚠️ Important Notes
 
+This setup intentionally reduces raw throughput in exchange for latency control
 
-2. Check Your ISP's Fair Usage Policy (FUP)
+That trade-off is unavoidable on LTE if you want working SQM
 
-Many LTE providers implement "Data Caps" or "Deprioritization" after a certain GB threshold.
+If you re-enable hardware offloading, SQM will stop working
 
-Throttling: If your provider drops your speed to 1Mbps after 100GB, SQM will actually cause more lag because the shaper is trying to allow 22Mbps through a 1Mbps pipe.
+If something breaks, a reboot + removing the scripts restores default behavior.
 
-Recommendation: Monitor your data usage. If you hit an FUP limit, you must manually update the SQM config to match the throttled speed.
+✅ Tested Environment
 
+Router: GL-AX1800
 
-3. Applying Your Speeds
-To set your specific download and upload speeds (in Kilobits), run the following commands on your router:
-Bash
+Firmware: OpenWrt
 
-Example for 22Mbps Down and 8Mbps Up
+WAN: LTE / Cellular
 
-    uci set sqm.eth0.download='22000'
-    uci set sqm.eth0.upload='8000'
-    uci commit sqm
-    /etc/init.d/sqm restart
+SQM: CAKE (ingress + egress)
 
-Optimization Tips for LTE
-Scenario	Adjustment
-High Jitter/Ping Spikes	Lower the download speed by another 5-10%.
-Bufferbloat "C" or lower	Ensure linklayer is set to none in /etc/config/sqm for LTE.
-Video Buffering	Slightly increase the download limit, but monitor the av_delay in tc -s qdisc.
+Other Qualcomm-based OpenWrt routers may work with minimal or no changes.
 
+📌 Final Thoughts
 
-===================================================================================
+This is not a “tweak” — it’s a correctness fix.
 
-Troubleshooting Log (Homelab Notes)
+If you depend on LTE for:
 
-===================================
+Remote work
 
-During implementation, several hurdles were cleared:
+Video calls
 
-Issue: tc -s qdisc showed 0 bytes even when downloading.
+Gaming
 
-Fix: Identified that Shortcut Forwarding Engine (SFE) was active; disabled via UCI and firewall settings.
+General responsiveness under load
 
-
-Issue: Interface ifb0 disappeared on reboot.
-
-Fix: Switched to a Hotplug script that listens for the wan interface "up" event to trigger the bridge creation.
-
-
-Issue: SQM service naming conflict.
-
-Fix: Discovered through kernel logs that SQM expected the naming convention ifb4eth0, and updated manual scripts to match.
-
-
-=============================================================
-
-Verification & Metrics
-
-======================
-
-To verify the shaper is active, run the following command during a speed test:
-
-    tc -s qdisc show dev ifb4eth0
-
-Success Criteria:
-
-qdisc cake is visible as the active discipline.
-
-Sent [X] bytes is actively increasing.
-
-backlog shows small values, indicating CAKE is actively managing the queue.
-
-Verify NSS Offloading is disabled. If it returns nothing or shows the modules are not in use, it confirms the "hack" is active:
-
-    lsmod | grep nss
-
-See example.png for results
-
-============================================================
-
-How to use:
-
-===========
-
-Upload scripts to /etc/init.d/ and /etc/hotplug.d/iface/.
-
-Ensure script permissions are executable: 
-
-    chmod +x /etc/init.d/sqm-fix.
-
-Disable hardware acceleration in the OpenWrt firewall settings.
-
-Enable the service: 
-
-    /etc/init.d/sqm-fix enable.
+…then forcing traffic through the CPU is the only reliable way SQM can do its job.
