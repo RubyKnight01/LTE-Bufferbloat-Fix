@@ -106,8 +106,7 @@ Copy the entire SQM Initialization Script from SCRIPTS.md📄
 
 , then save and exit.
 
-👉 All commands and scripts are documented in detail here:
-## 📄 SCRIPTS.md
+👉 All commands and scripts are documented in detail here: ##### 📄 SCRIPTS.md
 
 4️⃣ Make the script executable
 ```
