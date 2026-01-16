@@ -6,6 +6,46 @@ Adaptive Persistence: Custom scripts in init.d and hotplug.d ensure the virtual 
 
 Overhead Compensation: Configured to handle the variable nature of LTE packet encapsulation.
 
+⚙️ Configuration & Speed Tuning
+
+Before deploying the scripts, you must define your bandwidth targets. Unlike fixed-line broadband, LTE requires a more strategic approach to speed setting.
+
+
+1. Identify Your "True" Baseline
+
+Run several speed tests at different times of the day (morning, afternoon, and peak evening hours).
+
+The Golden Rule: Set your SQM speeds to 85-90% of your lowest consistent result.
+
+If you usually get 30Mbps but it drops to 25Mbps during peak hours, use 22Mbps as your base.
+
+
+2. Check Your ISP's Fair Usage Policy (FUP)
+
+Many LTE providers implement "Data Caps" or "Deprioritization" after a certain GB threshold.
+
+Throttling: If your provider drops your speed to 1Mbps after 100GB, SQM will actually cause more lag because the shaper is trying to allow 22Mbps through a 1Mbps pipe.
+
+Recommendation: Monitor your data usage. If you hit an FUP limit, you must manually update the SQM config to match the throttled speed.
+
+
+3. Applying Your Speeds
+
+To set your specific download and upload speeds (in Kilobits), run the following commands on your router:
+Bash
+
+# Example for 22Mbps Down and 8Mbps Up
+uci set sqm.eth0.download='22000'
+uci set sqm.eth0.upload='8000'
+uci commit sqm
+/etc/init.d/sqm restart
+
+📈 Optimization Tips for LTE
+Scenario	Adjustment
+High Jitter/Ping Spikes	Lower the download speed by another 5-10%.
+Bufferbloat "C" or lower	Ensure linklayer is set to none in /etc/config/sqm for LTE.
+Video Buffering	Slightly increase the download limit, but monitor the av_delay in tc -s qdisc.
+
 =============================================================
 
 Troubleshooting Log (Homelab Notes)
