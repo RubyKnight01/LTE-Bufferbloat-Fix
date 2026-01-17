@@ -93,6 +93,7 @@ After creating these files on your router, you must make them executable so the 
 
 ```
 chmod +x /etc/init.d/sqm-fix
+chmod +x /etc/hotplug.d/iface/99-sqm-fix
 ```
 Activation
 
