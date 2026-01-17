@@ -32,15 +32,9 @@ start() {
     action mirred egress redirect dev ifb4eth0 2>/dev/null
 
     # 4. Restart the SQM service to pick up the new interface
-    /etc/init.d/sqm restart
-
-    echo "SQM Bridge successfully linked to ifb4eth0."
+    /etc/init.d/sqm restart  
 }
 
-stop() {
-    echo "Tearing down SQM Bridge..."
-    ip link delete ifb4eth0 2>/dev/null
-}
 ```
 2. Hotplug Persistence Script
 
