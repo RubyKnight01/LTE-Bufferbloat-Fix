@@ -8,7 +8,7 @@ File Path:
 /etc/init.d/sqm-fix
 ```
 Purpose: Handles the manual creation of the IFB virtual bridge and forces the redirection of WAN traffic to the CPU for shaping.
-Bash
+
 ```
 #!/bin/sh /etc/rc.common
 
@@ -49,7 +49,7 @@ File Path:
 /etc/hotplug.d/iface/99-sqm-fix
 ```
 Purpose: Ensures the shaper is "event-driven." It re-applies the bridge automatically if the LTE connection resets or the interface toggles.
-Bash
+
 ```
 #!/bin/sh
 
@@ -63,7 +63,7 @@ Bash
 Execution: Run via CLI (Manual Setup)
 
 Purpose: Disables the Qualcomm NSS and Shortcut Forwarding Engine (SFE). This is mandatory to prevent packets from "skipping" the CPU and ignoring SQM rules.
-Bash
+
 ```
 #!/bin/sh
 
@@ -90,14 +90,14 @@ uci commit firewall
 Permissions
 
 After creating these files on your router, you must make them executable so the system can run them:
-Bash
+
 ```
 chmod +x /etc/init.d/sqm-fix
 ```
 Activation
 
 To enable the initialization service to start automatically on every boot:
-Bash
+
 ```
 /etc/init.d/sqm-fix enable
 ```
