@@ -1,4 +1,4 @@
-##### 📡 LTE Bufferbloat Fix for OpenWrt (GL-AX1800)
+#### 📡 LTE Bufferbloat Fix for OpenWrt (GL-AX1800)
 
 This repository provides a reliable, CPU-based SQM setup for LTE connections on OpenWrt devices affected by hardware offloading (NSS / SFE), specifically tested on the GL-AX1800.
 
@@ -7,7 +7,7 @@ The goal is simple:
 
 
 
-##### ❓ The Problem (Why This Exists)
+#### ❓ The Problem (Why This Exists)
 
 On Qualcomm-based routers, LTE traffic is often:
 
@@ -25,7 +25,7 @@ Speed tests that look fine but real-world performance that feels terrible
 
 
 
-##### ✅ What This Fix Does
+#### ✅ What This Fix Does
 
 This setup forces all WAN traffic through the CPU, allowing SQM to work correctly by:
 
@@ -42,7 +42,7 @@ Stable latency, working CAKE shaping, and predictable LTE performance.
 
 
 
-##### 🧠 Who This Is For
+#### 🧠 Who This Is For
 
 This repo is for you if:
 
@@ -58,7 +58,7 @@ This is not a beginner networking tutorial — but everything is documented step
 
 
 
-##### 🧩 What’s in This Repository
+#### 🧩 What’s in This Repository
 
 README.md	👉 High-level explanation and usage
 
@@ -68,7 +68,7 @@ example.png 👉 Reference / visual context
 
 
 
-##### 🚀 High-Level Setup Overview
+#### 🚀 High-Level Setup Overview
 
 You will:
 
@@ -82,7 +82,7 @@ Enable the service so it runs on boot
 
 
 
-##### First create the SQM Init Script File
+#### First create the SQM Init Script File
 
 Before applying any fixes, you need to create the init script file that OpenWrt will execute.
 
@@ -123,7 +123,7 @@ At this point, the init script is installed and ready to run.
 
 
 
-##### ⚠️ Important Notes
+#### ⚠️ Important Notes
 
 This setup intentionally reduces raw throughput in exchange for latency control
 
@@ -135,7 +135,7 @@ If something breaks, a reboot + removing the scripts restores default behavior.
 
 
 
-##### ✅ Tested Environment
+#### ✅ Tested Environment
 
 Router: GL-AX1800
 
@@ -149,7 +149,7 @@ Other Qualcomm-based OpenWrt routers may work with minimal or no changes.
 
 
 
-##### 📌 Final Thoughts
+#### 📌 Final Thoughts
 
 This is not a “tweak” — it’s a correctness fix.
 
