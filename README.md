@@ -81,7 +81,7 @@ Add a hotplug script so SQM survives LTE reconnects
 Enable the service so it runs on boot
 
 
-## FIRST 👉👉👉 For SQM to work, set the connection speed slightly below its maximum capacity. This prevents the LTE modem's buffer from filling up.
+#### FIRST 👉👉👉 For SQM to work, set the connection speed slightly below its maximum capacity. This prevents the LTE modem's buffer from filling up.
 
 
 ### How to calculate your speeds:
