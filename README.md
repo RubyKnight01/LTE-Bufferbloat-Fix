@@ -98,7 +98,7 @@ Run a bufferbloat test at [waveform.com/tools/bufferbloat](https://www.waveform.
 |------|-------------|
 | `README.md` | This file - setup guide and overview |
 | `SCRIPTS.md` | Complete init scripts with detailed explanations |
-| `example.png` | Before/after bufferbloat test results |
+| `example.png` | Bufferbloat test results |
 | `example2.png` | Additional visual reference |
 | `example3.png` | Configuration screenshots |
 
