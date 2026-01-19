@@ -49,8 +49,19 @@ start() {
     tc filter add dev eth0 parent ffff: protocol all u32 match u32 0 0 \
         action mirred egress redirect dev ifb4eth0 2>/dev/null
     
-    # Restart SQM service to detect new interface
+    # Configure SQM to use the IFB interface
+    uci set sqm.eth0.interface='ifb4eth0'
+    uci commit sqm
+    
+    # Restart SQM service to detect new interface and apply CAKE
     /etc/init.d/sqm restart
+    
+    # Verify setup
+    sleep 2
+    echo "IFB interface status:"
+    ip link show ifb4eth0
+    echo "SQM shaping status:"
+    tc -s qdisc show dev ifb4eth0
 }
 ```
 
@@ -180,25 +191,44 @@ reboot
 
 After reboot, verify everything is working:
 
-### Check if IFB interface exists
+### 1. Check if IFB interface exists
 ```bash
 ip link show ifb4eth0
 ```
 **Expected output:** Should show `ifb4eth0` interface in UP state
 
-### Check if traffic redirection is active
+### 2. Verify SQM is actively shaping traffic on IFB interface
+```bash
+tc -s qdisc show dev ifb4eth0
+```
+**Expected output:** Should show CAKE qdisc statistics with packets/bytes being processed
+
+Example of working output:
+```
+qdisc cake 8001: root refcnt 2 bandwidth 25Mbit diffserv3 triple nonat nowash no-ack-filter split-gso rtt 100.0ms noatm overhead 0
+ Sent 1234567 bytes 8901 pkt (dropped 12, overlimits 234 requeues 0)
+```
+
+**What to look for:**
+- `qdisc cake` indicates CAKE is active
+- `Sent X bytes Y pkt` shows traffic is being processed
+- `dropped` and `overlimits` counters indicate shaping is working
+
+**If you see "qdisc noqueue":** SQM is NOT working on this interface
+
+### 3. Check if traffic redirection is active
 ```bash
 tc filter show dev eth0 ingress
 ```
 **Expected output:** Should show filter redirecting to `ifb4eth0`
 
-### Check SQM status
+### 4. Check SQM service status
 ```bash
 /etc/init.d/sqm status
 ```
 **Expected output:** `running`
 
-### Check hardware offloading is disabled
+### 5. Verify hardware offloading is disabled
 ```bash
 uci get network.globals.nss_offload
 uci get firewall.@defaults[0].flow_offloading
@@ -211,11 +241,47 @@ uci get firewall.@defaults[0].flow_offloading
 
 ### IFB interface doesn't exist after reboot
 ```bash
+# Check if sqm-fix script ran on boot
+logread | grep "SQM Bridge"
+
 # Manually run init script
 /etc/init.d/sqm-fix start
 
-# Check if script is enabled
+# Verify IFB was created
+ip link show ifb4eth0
+
+# Check if script is enabled for boot
 ls -l /etc/rc.d/*sqm-fix
+```
+
+### SQM not shaping traffic (tc -s qdisc shows "noqueue")
+```bash
+# This means SQM hasn't attached CAKE to the IFB interface
+# First check if SQM is configured for the right interface
+uci show sqm
+
+# The interface should be set to "ifb4eth0"
+uci set sqm.eth0.interface='ifb4eth0'
+uci commit sqm
+/etc/init.d/sqm restart
+
+# Verify CAKE is now active
+tc -s qdisc show dev ifb4eth0
+```
+
+### CAKE statistics show zero packets/bytes
+```bash
+# Traffic isn't being redirected to IFB
+# Check if tc filter exists
+tc filter show dev eth0 ingress
+
+# If missing, manually recreate the redirect
+tc qdisc add dev eth0 handle ffff: ingress 2>/dev/null
+tc filter add dev eth0 parent ffff: protocol all u32 match u32 0 0 \
+    action mirred egress redirect dev ifb4eth0
+
+# Verify traffic is now flowing
+tc -s qdisc show dev ifb4eth0
 ```
 
 ### Hardware offloading re-enabled after firmware update
