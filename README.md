@@ -1,187 +1,171 @@
-#### 📡 LTE Bufferbloat Fix for OpenWrt (GL-AX1800)
+# LTE Bufferbloat Fix for OpenWrt (GL.iNet GL-AX1800 for this example/guide)
 
-This repository provides a reliable, CPU-based SQM setup for LTE connections on OpenWrt devices affected by hardware offloading (NSS / SFE), specifically tested on the GL-AX1800.
+**Fix high latency on LTE connections by forcing traffic through CPU-based SQM/CAKE shaping.**
 
-The goal is simple:
-👉 Fix bufferbloat on LTE connections so latency stays low under load.
+Tested on GL-AX1800 running OpenWrt with LTE/cellular WAN.
 
-===========================
+---
 
-#### ❓ The Problem (Why This Exists)
+## The Problem
 
-On Qualcomm-based routers, LTE traffic is often:
+Qualcomm-based routers offload LTE traffic to hardware (NSS/SFE), bypassing the Linux network stack. This makes SQM invisible to traffic, causing:
+- High latency under load
+- Poor real-time performance (calls, gaming, remote work)
+- Speed tests look fine, but actual experience is terrible
 
-Offloaded to hardware (NSS / SFE)
+## The Solution
 
-Routed around the Linux networking stack
+This fix forces WAN traffic through the CPU using:
+- IFB (Intermediate Functional Block) interface for ingress shaping
+- Disabled hardware acceleration (NSS/SFE)
+- Persistent scripts that survive reboots and LTE reconnects
 
-Invisible to SQM / CAKE
+**Trade-off:** Lower raw throughput in exchange for stable, low latency.
 
-This causes:
+---
 
-High latency under load
+## Quick Start
 
-Speed tests that look fine but real-world performance that feels terrible
+### Prerequisites
+- OpenWrt router (Qualcomm-based, tested on GL-AX1800)
+- LTE/cellular WAN connection
+- SSH access to router
+- Basic command line knowledge
 
-===========================
+### Step 1: Calculate Your SQM Speeds
 
-#### ✅ What This Fix Does
+Run 3-5 speed tests at different times. Use your **lowest consistent speeds** and set SQM to **85-90%** of those values.
 
-This setup forces all WAN traffic through the CPU, allowing SQM to work correctly by:
-
-Creating an IFB (Intermediate Functional Block) interface for ingress shaping
-
-Redirecting WAN traffic to that IFB device
-
-Making the setup persistent across reboots and LTE reconnects
-
-Disabling hardware acceleration that bypasses SQM
-
-Result:
-Stable latency, working CAKE shaping, and predictable LTE performance.
-
-=============================
-
-#### 🧠 Who This Is For
-
-This repo is for you if:
-
-You’re using OpenWrt on a Qualcomm-based router
-
-You rely on LTE / cellular WAN
-
-SQM appears enabled but bufferbloat remains
-
-You’re comfortable running a few shell commands
-
-This is not a beginner networking tutorial — but everything is documented step-by-step.
-
-============================
-
-#### 🧩 What’s in This Repository
-
-README.md	👉 High-level explanation and usage
-
-SCRIPTS.md 👉 Copy-ready scripts with full explanations
-
-example.png 👉 Reference / visual context
-
-===========================
-
-#### 🚀 High-Level Setup Overview
-
-You will:
-
-Disable hardware acceleration (NSS / SFE)
-
-Install an init script to create the IFB bridge
-
-Add a hotplug script so SQM survives LTE reconnects
-
-Enable the service so it runs on boot
-
-=========================================
-
-#### FIRST 👉👉👉 For SQM to work, set the connection speed slightly below its maximum capacity. This prevents the LTE modem's buffer from filling up.
-
-
-### How to calculate your speeds:
-1. Run 3-5 speed tests at different times of the day.
-2. Find your **lowest** consistent Download and Upload speeds.
-3. Set your SQM limits to **85-90%** of those values.
-
-**Example:** If you usually get 30Mbps down, set your SQM to `25000` (25Mbps).
-
-### Apply Speeds via CLI:
-Run these commands to set your target speeds (in kbit/s):
+**Example:** If you get 30 Mbps down / 12 Mbps up → Set SQM to 25 Mbps / 10 Mbps
 
 ```bash
-# Set Download to 25Mbps and Upload to 10Mbps
-uci set sqm.eth0.download='25000'
-uci set sqm.eth0.upload='10000'
+# Set speeds (values in kbit/s)
+uci set sqm.eth0.download='25000'  # 25 Mbps
+uci set sqm.eth0.upload='10000'    # 10 Mbps
 uci commit sqm
 /etc/init.d/sqm restart
 ```
 
-## 👉👉 Create the SQM Init Script File 👈👈
+### Step 2: Install Init Scripts
 
-Before applying any fixes, you need to create the init script file that OpenWrt will execute.
-
-1️⃣ SSH into your router
-
-```
-ssh root@yourrouterip
+**SSH into your router:**
+```bash
+ssh root@your.router.ip
 ```
 
-2️⃣ Create the init script file
-
-Use a text editor such as vi or nano:
-
-```
+**Create the init script files:**
+```bash
 vi /etc/init.d/sqm-fix
-
 vi /etc/init.d/99-sqm-fix
 ```
 
-3️⃣ Paste the script contents into their respective files
+**Copy script contents from [SCRIPTS.md](SCRIPTS.md)**
 
-Press 'i' to start editing the file. Copy the Scripts from SCRIPTS.md📄
+Press `i` to edit, paste content, then save with `ESC` → `:wq` → `ENTER`
 
-, then save and exit. (ESC > :wq > ENTER)
-
-👉 All commands and scripts are documented in detail here: #### 📄 SCRIPTS.md
-
-4️⃣ Make the script executable
-```
+**Make scripts executable and enable on boot:**
+```bash
 chmod +x /etc/init.d/sqm-fix
-```
-
-5️⃣ Enable the script to run on boot
-```
+chmod +x /etc/init.d/99-sqm-fix
 /etc/init.d/sqm-fix enable
+/etc/init.d/99-sqm-fix enable
 ```
 
-At this point, the init script is installed and ready to run.
+**Reboot to apply:**
+```bash
+reboot
+```
 
+### Step 3: Verify It's Working
 
-=============================================
+After reboot, check if IFB interface exists:
+```bash
+ip link show ifb4eth0
+```
 
-#### ⚠️ Important Notes
+Check SQM status:
+```bash
+/etc/init.d/sqm status
+```
 
-This setup intentionally reduces raw throughput in exchange for latency control
+Run a bufferbloat test at [waveform.com/tools/bufferbloat](https://www.waveform.com/tools/bufferbloat)
 
-That trade-off is unavoidable on LTE if you want working SQM
+---
 
-If you re-enable hardware offloading, SQM will stop working
+## Repository Contents
 
-If something breaks, a reboot + removing the scripts restores default behavior.
+| File | Description |
+|------|-------------|
+| `README.md` | This file - setup guide and overview |
+| `SCRIPTS.md` | Complete init scripts with detailed explanations |
+| `example.png` | Before/after bufferbloat test results |
+| `example2.png` | Additional visual reference |
+| `example3.png` | Configuration screenshots |
 
-============================================
+---
 
-#### ✅ Tested Environment
+## Important Notes
 
-Router: GL-AX1800
+⚠️ **This intentionally reduces throughput for latency control** - unavoidable trade-off for working SQM on LTE
 
-Firmware: OpenWrt
+⚠️ **Re-enabling hardware offloading breaks SQM** - don't enable NSS/SFE
 
-WAN: LTE / Cellular
+⚠️ **Rollback:** If something breaks, remove scripts and reboot to restore defaults
 
-SQM: CAKE (ingress + egress)
+✅ **Best for:** Remote work, video calls, gaming, or any latency-sensitive use case
 
-Other Qualcomm-based OpenWrt routers may work with minimal or no changes.
+---
 
-===========================================
+## Tested Environment
 
-#### 📌 Final Thoughts
+- **Router:** GL-AX1800
+- **Firmware:** OpenWrt
+- **WAN:** LTE / Cellular
+- **QoS:** SQM with CAKE qdisc (ingress + egress)
 
-If you depend on LTE for:
+Other Qualcomm-based OpenWrt routers should work with minimal changes.
 
-Remote work
+---
 
-Video calls
+## Troubleshooting
 
-Gaming
+**SQM not working after setup?**
+- Check if hardware offloading is disabled
+- Verify IFB interface exists: `ip link show ifb4eth0`
+- Check logs: `logread | grep sqm`
 
-General responsiveness under load
+**Speeds too slow?**
+- Your SQM limits may be too conservative
+- Increase to 90-95% of your lowest test results
 
-…then forcing traffic through the CPU is a reliable method SQM can do its job.
+**LTE reconnects break SQM?**
+- Ensure `99-sqm-fix` hotplug script is installed
+- Check if it's executable: `ls -l /etc/init.d/99-sqm-fix`
+
+**Need to revert everything?**
+```bash
+/etc/init.d/sqm-fix disable
+rm /etc/init.d/sqm-fix
+rm /etc/init.d/99-sqm-fix
+reboot
+```
+
+---
+
+## Contributing
+
+Found a bug? Have improvements? Open an issue or PR.
+
+This is a homelab project - community input helps improve it for everyone.
+
+---
+
+## License
+
+[Choose appropriate license - e.g., MIT, GPL-3.0]
+
+---
+
+## Acknowledgments
+
+Thanks to the OpenWrt and SQM communities for documentation and troubleshooting resources.
