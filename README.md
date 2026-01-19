@@ -125,11 +125,11 @@ vi /etc/init.d/99-sqm-fix
 
 3️⃣ Paste the script contents into their respective files
 
-Copy the entire SQM Initialization Script from SCRIPTS.md📄
+Press 'i' to start editing the file. Copy the Scripts from SCRIPTS.md📄
 
 , then save and exit. (ESC > :wq > ENTER)
 
-👉 All commands and scripts are documented in detail here: ##### 📄 SCRIPTS.md
+👉 All commands and scripts are documented in detail here: #### 📄 SCRIPTS.md
 
 4️⃣ Make the script executable
 ```
@@ -174,8 +174,6 @@ Other Qualcomm-based OpenWrt routers may work with minimal or no changes.
 
 #### 📌 Final Thoughts
 
-This is not a “tweak” — it’s a correctness fix.
-
 If you depend on LTE for:
 
 Remote work
@@ -186,4 +184,4 @@ Gaming
 
 General responsiveness under load
 
-…then forcing traffic through the CPU is the only reliable way SQM can do its job.
+…then forcing traffic through the CPU is a reliable method SQM can do its job.
