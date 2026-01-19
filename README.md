@@ -80,7 +80,9 @@ Add a hotplug script so SQM survives LTE reconnects
 
 Enable the service so it runs on boot
 
+
 ## FIRST 👉👉👉 For SQM to work, you must tell the router to "choke" the connection slightly below its maximum capacity. This prevents the LTE modem's buffer from filling up.
+
 
 ### How to calculate your speeds:
 1. Run 3-5 speed tests at different times of the day.
@@ -95,16 +97,16 @@ Run these commands to set your target speeds (in kbit/s):
 ```bash
 # Set Download to 25Mbps and Upload to 8Mbps
 uci set sqm.eth0.download='25000'
-uci set sqm.eth0.upload='8000'
+uci set sqm.eth0.upload='10000'
 uci commit sqm
 /etc/init.d/sqm restart
 ```
 
-#### Then create the SQM Init Script File
+#### 👉👉 Create the SQM Init Script File 👈👈
 
 Before applying any fixes, you need to create the init script file that OpenWrt will execute.
 
-START HERE 👉👉👉👉👉 1️⃣ SSH into your router
+1️⃣ SSH into your router
 
 ```
 ssh root@yourrouterip
