@@ -32,7 +32,15 @@ This fix forces WAN traffic through the CPU using:
 - SSH access to router
 - Basic command line knowledge
 
-### Step 1: Calculate Your SQM Speeds
+### Step 1: Install Init Scripts
+
+**SSH into your router:**
+```bash
+ssh root@your.router.ip
+```
+
+
+Calculate Your SQM Speeds
 
 Run 3-5 speed tests at different times. Use your **lowest consistent speeds** and set SQM to **85-90%** of those values.
 
@@ -46,12 +54,6 @@ uci commit sqm
 /etc/init.d/sqm restart
 ```
 
-### Step 2: Install Init Scripts
-
-**SSH into your router:**
-```bash
-ssh root@your.router.ip
-```
 
 **Create the init script files:**
 ```bash
@@ -76,7 +78,7 @@ chmod +x /etc/init.d/99-sqm-fix
 reboot
 ```
 
-### Step 3: Verify It's Working
+### Step 2: Verify It's Working
 
 After reboot, check if IFB interface exists:
 ```bash
