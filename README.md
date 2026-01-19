@@ -1,4 +1,4 @@
-# LTE Bufferbloat Fix for OpenWrt (GL.iNet GL-AX1800 for this example/guide)
+# LTE Bufferbloat Fix for OpenWrt Routers (GL.iNet GL-AX1800 for this example/guide)
 
 **Fix high latency on LTE connections by forcing traffic through CPU-based SQM/CAKE shaping.**
 
