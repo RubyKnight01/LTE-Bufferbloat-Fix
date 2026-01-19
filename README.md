@@ -27,7 +27,7 @@ This fix forces WAN traffic through the CPU using:
 ## Quick Start
 
 ### Prerequisites
-- OpenWrt router (Qualcomm-based, tested on GL-AX1800)
+- OpenWrt router 
 - LTE/cellular WAN connection
 - SSH access to router
 - Basic command line knowledge
@@ -160,12 +160,6 @@ This is a homelab project - community input helps improve it for everyone.
 
 ---
 
-## License
-
-[Choose appropriate license - e.g., MIT, GPL-3.0]
-
----
-
 ## Acknowledgments
 
-Thanks to the OpenWrt and SQM communities for documentation and troubleshooting resources.
+Was done with the help of AI (not gonna lie) but everybit of troubleshooting was done to fix issues that came up until the fix worked as intended.
