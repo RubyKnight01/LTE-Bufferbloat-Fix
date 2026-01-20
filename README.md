@@ -85,7 +85,7 @@ To check if sqm is working run:
 ```
 tc -s qdisc show dev ifb4eth0
 ```
-You should get an output like, which confirm SQM is working:
+You should get an output as below, which confirm SQM is working:
 
 ```
 root@GL-AX1800:~# tc -s qdisc show dev ifb4eth0
