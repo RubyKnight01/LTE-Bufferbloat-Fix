@@ -113,7 +113,7 @@ chmod +x /etc/init.d/99-sqm-fix
 
 ---
 
-## Script 3: Disable Hardware Offloading
+## Script 3: Disable Hardware Offloading (In this case specifically for the GLi.Inet router)
 
 **⚠️ CRITICAL:** This must be run manually **before** enabling the other scripts. Hardware offloading bypasses the CPU entirely, making SQM ineffective.
 
@@ -123,25 +123,33 @@ Copy and paste this entire block into your SSH session:
 
 ```bash
 #!/bin/sh
-# Disable NSS and Firewall Offloading
-# Forces traffic through Linux networking stack
+# Target: GL-AX1800 (Flint) Hardware Acceleration Disable
+# This forces traffic out of the Qualcomm NSS engine and into the Linux CPU stack for SQM.
 
-uci set network.globals.nss_offload='0' 2>/dev/null
+echo "Stopping GL.iNet Network Acceleration..."
+# 1. Disable the GL.iNet master acceleration service
+uci set network_acc.general.enabled='0'
+uci commit network_acc
+/etc/init.d/network_acc stop
+/etc/init.d/network_acc disable
+
+echo "Disabling Firewall Offloading..."
+# 2. Disable standard offloading (even if it throws warnings, keep it set to 0)
 uci set firewall.@defaults[0].flow_offloading='0'
 uci set firewall.@defaults[0].fullcone_nat='0'
-
-# Commit changes to router configuration
-uci commit network
 uci commit firewall
 
-# Restart services to apply CPU-path routing
+echo "Applying NSS Bypass..."
+# 3. Force the NSS (Network Subsystem) to ignore packets
+# This is the 'secret sauce' for Qualcomm chips
+sysctl -w dev.nss.cm.fast_path_disable=1 2>/dev/null
+
+echo "Restarting Network Services..."
 /etc/init.d/network restart
 /etc/init.d/firewall restart
 
-# Disable proprietary Shortcut Forwarding Engine if present
-/etc/init.d/shortcut-fe stop
-/etc/init.d/shortcut-fe disable
-```
+echo "Verifying acceleration drivers are unloaded..."
+lsmod | grep -E "qca_nss_ecm|shortcut_fe|capacity"
 
 **What this does:**
 - Disables NSS (Qualcomm Network Subsystem)
