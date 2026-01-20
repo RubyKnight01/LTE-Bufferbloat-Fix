@@ -85,7 +85,7 @@ Automatically reapplies the IFB bridge when LTE reconnects or interface resets.
 ### Installation
 
 ```bash
-vi /etc/hotplug.d/iface/99-sqm-fix
+vi /etc/init.d/99-sqm-fix
 ```
 
 Press `i` to enter insert mode, paste the script below, then save with `ESC` → `:wq` → `ENTER`
@@ -103,7 +103,7 @@ Press `i` to enter insert mode, paste the script below, then save with `ESC` →
 ### Activation
 
 ```bash
-chmod +x /etc/hotplug.d/iface/99-sqm-fix
+chmod +x /etc/init.d/99-sqm-fix
 ```
 
 **What this does:**
