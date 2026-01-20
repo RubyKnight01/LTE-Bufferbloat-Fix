@@ -80,6 +80,51 @@ reboot
 
 ### Step 2: Verify It's Working
 
+To check if sqm is working run:
+
+```
+tc -s qdisc show dev ifb4eth0
+```
+You should get an output like, which confirm SQM is working:
+
+```
+root@GL-AX1800:~# tc -s qdisc show dev ifb4eth0
+qdisc cake 8029: root refcnt 2 bandwidth 23Mbit besteffort triple-isolate nonat nowash no-ack-filter split-gso rtt 100ms raw overhead 0
+ Sent 807718 bytes 1148 pkt (dropped 1, overlimits 1046 requeues 0)
+ backlog 0b 0p requeues 0
+ memory used: 128640b of 4Mb
+ capacity estimate: 23Mbit
+ min/max network layer size:           60 /    1454
+ min/max overhead-adjusted size:       60 /    1454
+ average network hdr offset:           14
+
+                  Tin 0
+  thresh         23Mbit
+  target            5ms
+  interval        100ms
+  pk_delay       1.13ms
+  av_delay        370us
+  sp_delay          8us
+  backlog            0b
+  pkts             1149
+  bytes          809010
+  way_inds            0
+  way_miss           50
+  way_cols            0
+  drops               1
+  marks               0
+  ack_drop            0
+  sp_flows            0
+  bk_flows            1
+  un_flows            0
+  max_len          6695
+  quantum           701
+
+qdisc ingress ffff: parent ffff:fff1 ----------------
+ Sent 0 bytes 0 pkt (dropped 0, overlimits 0 requeues 0)
+ backlog 0b 0p requeues 0
+```
+
 After reboot, check if IFB interface exists:
 ```bash
 ip link show ifb4eth0
