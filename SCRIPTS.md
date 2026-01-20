@@ -123,28 +123,30 @@ Copy and paste this entire block into your SSH session:
 
 ```bash
 #!/bin/sh
-# Target: GL-AX1800 / Qualcomm IPQ60xx
-# Force-disable all hardware acceleration for SQM/Bufferbloat fixes
 
-echo "Disabling NSS Co-Processor Fast Path..."
-# These sysctl calls are the most reliable way to kill Qualcomm acceleration
-sysctl -w dev.nss.cm.fast_path_disable=1 2>/dev/null
-sysctl -w dev.nss.sfe.exception_events=1 2>/dev/null
+echo "--- Disabling Qualcomm Hardware Acceleration ---"
 
-# If the above don't exist, we try the ECM (Enhanced Connectivity Manager) stop
-echo 1 > /sys/kernel/debug/ecm/front_end_ipv4/stop 2>/dev/null
-echo 1 > /sys/kernel/debug/ecm/front_end_ipv6/stop 2>/dev/null
+# 1. Disable NSS Fast Path
+if [ -e /proc/sys/dev/nss/cm/fast_path_disable ]; then
+    sysctl -w dev.nss.cm.fast_path_disable=1
+    sysctl -w dev.nss.sfe.exception_events=1
+    echo "NSS hardware bypass enabled."
+fi
 
-echo "Disabling Software Flow Offloading..."
+# 2. Stop ECM (Enhanced Connectivity Management)
+if [ -d /sys/kernel/debug/ecm ]; then
+    echo 1 > /sys/kernel/debug/ecm/front_end_ipv4/stop 2>/dev/null
+    echo 1 > /sys/kernel/debug/ecm/front_end_ipv6/stop 2>/dev/null
+    echo "ECM engine stopped."
+fi
+
+# 3. Disable Software Flow Offloading in Firewall
 uci set firewall.@defaults[0].flow_offloading='0'
 uci set firewall.@defaults[0].software_flow_offloading='0'
 uci commit firewall
-
-echo "Restarting Firewall to apply..."
 /etc/init.d/firewall restart
 
-echo "Current Acceleration Module Status:"
-lsmod | grep -E "nss|qca|ecm"
+echo "--- SQM is now in full control of traffic ---"
 
 ```
 
