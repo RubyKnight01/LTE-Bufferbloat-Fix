@@ -123,33 +123,30 @@ Copy and paste this entire block into your SSH session:
 
 ```bash
 #!/bin/sh
-# Target: GL-AX1800 (Flint) Hardware Acceleration Disable
-# This forces traffic out of the Qualcomm NSS engine and into the Linux CPU stack for SQM.
+# Target: GL-AX1800 / Qualcomm IPQ60xx
+# Force-disable all hardware acceleration for SQM/Bufferbloat fixes
 
-echo "Stopping GL.iNet Network Acceleration..."
-# 1. Disable the GL.iNet master acceleration service
-uci set network_acc.general.enabled='0'
-uci commit network_acc
-/etc/init.d/network_acc stop
-/etc/init.d/network_acc disable
+echo "Disabling NSS Co-Processor Fast Path..."
+# These sysctl calls are the most reliable way to kill Qualcomm acceleration
+sysctl -w dev.nss.cm.fast_path_disable=1 2>/dev/null
+sysctl -w dev.nss.sfe.exception_events=1 2>/dev/null
 
-echo "Disabling Firewall Offloading..."
-# 2. Disable standard offloading (even if it throws warnings, keep it set to 0)
+# If the above don't exist, we try the ECM (Enhanced Connectivity Manager) stop
+echo 1 > /sys/kernel/debug/ecm/front_end_ipv4/stop 2>/dev/null
+echo 1 > /sys/kernel/debug/ecm/front_end_ipv6/stop 2>/dev/null
+
+echo "Disabling Software Flow Offloading..."
 uci set firewall.@defaults[0].flow_offloading='0'
-uci set firewall.@defaults[0].fullcone_nat='0'
+uci set firewall.@defaults[0].software_flow_offloading='0'
 uci commit firewall
 
-echo "Applying NSS Bypass..."
-# 3. Force the NSS (Network Subsystem) to ignore packets
-# This is the 'secret sauce' for Qualcomm chips
-sysctl -w dev.nss.cm.fast_path_disable=1 2>/dev/null
-
-echo "Restarting Network Services..."
-/etc/init.d/network restart
+echo "Restarting Firewall to apply..."
 /etc/init.d/firewall restart
 
-echo "Verifying acceleration drivers are unloaded..."
-lsmod | grep -E "qca_nss_ecm|shortcut_fe|capacity"
+echo "Current Acceleration Module Status:"
+lsmod | grep -E "nss|qca|ecm"
+
+```
 
 **What this does:**
 - Disables NSS (Qualcomm Network Subsystem)
