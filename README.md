@@ -213,9 +213,9 @@ Was done with the help of AI (not gonna lie) but everybit of troubleshooting was
 
 ---
 
-## ⚠️ Disclaimer
-**Use this at your own risk.** Modifying router configurations via CLI and disabling hardware acceleration (NSS/SFE) can impact maximum throughput and system stability. 
+## ⚠️ Important 
+
 * Ensure you have a backup of your configuration before proceeding.
-* This fix is designed specifically for LTE/5G backhauls where latency is the priority over gigabit speeds.
+  
 
 
