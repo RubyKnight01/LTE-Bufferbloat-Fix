@@ -307,7 +307,7 @@ ls -l /etc/hotplug.d/iface/99-sqm-fix
 /etc/init.d/sqm-fix stop
 /etc/init.d/sqm-fix disable
 rm /etc/init.d/sqm-fix
-rm /etc/hotplug.d/iface/99-sqm-fix
+rm /etc/init.d/99-sqm-fix
 
 # Re-enable hardware offloading (optional)
 uci set network.globals.nss_offload='1'
