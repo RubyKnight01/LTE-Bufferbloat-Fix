@@ -184,9 +184,9 @@ chmod +x /etc/init.d/sqm-fix
 /etc/init.d/sqm-fix enable
 
 # 4. Create and install hotplug persistence script
-vi /etc/hotplug.d/iface/99-sqm-fix
+vi /etc/init.d/99-sqm-fix
 # (paste Script 2 contents, save with ESC :wq ENTER)
-chmod +x /etc/hotplug.d/iface/99-sqm-fix
+chmod +x /etc/init.d/99-sqm-fix
 
 # 5. Reboot to apply all changes
 reboot
@@ -297,7 +297,7 @@ Re-run Script 3 (Hardware Offloading Kill-Switch)
 ### SQM stops working after LTE reconnect
 ```bash
 # Check if hotplug script exists and is executable
-ls -l /etc/hotplug.d/iface/99-sqm-fix
+ls -l /etc/init.d/99-sqm-fix
 
 # Manually trigger it
 /etc/init.d/sqm-fix start
