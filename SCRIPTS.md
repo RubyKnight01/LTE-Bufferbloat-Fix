@@ -113,11 +113,9 @@ chmod +x /etc/init.d/99-sqm-fix
 
 ---
 
-## Script 3: Disable Hardware Offloading (In this case specifically for the GLi.Inet router)
+## Disable Hardware Offloading (In this case specifically for the GLi.Inet router)
 
-**⚠️ CRITICAL:** This must be run manually **before** enabling the other scripts. Hardware offloading bypasses the CPU entirely, making SQM ineffective.
-
-### Run Once via CLI
+Run Once via CLI
 
 Copy and paste this entire block into your SSH session:
 
