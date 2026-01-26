@@ -199,20 +199,6 @@ reboot
 
 ---
 
-## Contributing
-
-Found a bug? Have improvements? Open an issue or PR.
-
-This is a homelab project - community input helps improve it for everyone.
-
----
-
-## Acknowledgments
-
-Was done with the help of AI (not gonna lie) but everybit of troubleshooting was done to fix issues that came up until the fix worked as intended.
-
----
-
 ## ⚠️ Important 
 
 * Ensure you have a backup of your configuration before proceeding.
