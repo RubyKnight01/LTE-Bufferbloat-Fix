@@ -154,43 +154,6 @@ echo "--- SQM is now in full control of traffic ---"
 - Disables Shortcut Forwarding Engine (SFE)
 - Restarts network services to apply changes
 
----
-
-## Complete Installation Checklist
-
-Run these commands in order:
-
-```bash
-# 1. SSH into router
-ssh root@your.router.ip
-
-# 2. Disable hardware offloading (run once)
-uci set network.globals.nss_offload='0' 2>/dev/null
-uci set firewall.@defaults[0].flow_offloading='0'
-uci set firewall.@defaults[0].fullcone_nat='0'
-uci commit network
-uci commit firewall
-/etc/init.d/network restart
-/etc/init.d/firewall restart
-/etc/init.d/shortcut-fe stop 2>/dev/null
-/etc/init.d/shortcut-fe disable 2>/dev/null
-
-# 3. Create and install sqm-fix init script
-vi /etc/init.d/sqm-fix
-# (paste Script 1 contents, save with ESC :wq ENTER)
-chmod +x /etc/init.d/sqm-fix
-/etc/init.d/sqm-fix enable
-
-# 4. Create and install hotplug persistence script
-vi /etc/init.d/99-sqm-fix
-# (paste Script 2 contents, save with ESC :wq ENTER)
-chmod +x /etc/init.d/99-sqm-fix
-
-# 5. Reboot to apply all changes
-reboot
-```
-
----
 
 ## Verification
 
