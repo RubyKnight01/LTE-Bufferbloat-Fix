@@ -4,6 +4,8 @@
 
 Tested on GL-AX1800 running OpenWrt with LTE/cellular WAN.
 
+![Output Preview](example.png)
+
 ---
 
 ## The Problem
